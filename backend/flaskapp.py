@@ -27,6 +27,7 @@ def generate_learning_content(topic, content_type='explanation'):
 
             'flashcards': f"""Generate 6-8 detailed flashcards for {topic}. Each flashcard should:
             - Have a front side with a question or term
+            - Should be less than 20 words
             - A back side with a clear and concise explanation
             - Vary in difficulty
             - Cover key concepts""",
@@ -59,7 +60,7 @@ def parse_flashcards(raw_text, topic):
                     "id": f"flashcard_{uuid.uuid4().hex[:8]}",
                     "front": front.strip(),
                     "back": back.strip(),
-                    "difficulty": "medium",
+                    "difficulty": "easy",
                     "category": topic
                 })
             except Exception:
