@@ -49,8 +49,10 @@ export default function ExplanationPage() {
           </div>
 
           <div className="mt-6 text-sm text-gray-400">
-            Generated at: {new Date(explanationData.metadata.generated_at).toLocaleString()}
+            Generated at:{" "}
+              {explanationData?.metadata?.generated_at? new Date(explanationData.metadata.generated_at).toLocaleString(): "N/A"}
           </div>
+
         </Card>
 
         <Button onClick={() => router.push("/")}>Back to Home</Button>
