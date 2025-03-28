@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Learning Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-transition {
+            transition: all 0.3s ease;
+        }
+        .card-transition:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <div class="container mx-auto max-w-2xl px-4 py-8 flex-grow">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-4">Academic Learning Assistant</h1>
+            <p class="text-gray-600">Generate explanations, flashcards, and quizzes</p>
+        </header>
+
+        <section id="topic-input" class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <div class="mb-4">
+                <input 
+                    type="text" 
+                    id="topic" 
+                    placeholder="Enter a topic (e.g., Photosynthesis)" 
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+            <button 
+                id="generate-btn" 
+                class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
+            >
+                Generate Content
+            </button>
+        </section>
+
+        <section id="explanation" class="hidden">
+            <div 
+                class="bg-white shadow-md rounded-lg p-6 mb-6"
+            >
+                <h2 class="text-2xl font-semibold mb-4 text-blue-700">Explanation</h2>
+                <div id="explanation-content" class="text-gray-700"></div>
+            </div>
+
+            <div id="learning-methods" class="flex justify-center space-x-4 mb-6">
+                <button 
+                    data-method="flashcards" 
+                    class="learning-method px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+                >
+                    Flashcards
+                </button>
+                <button 
+                    data-method="mcq" 
+                    class="learning-method px-6 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition"
+                >
+                    Multiple Choice
+                </button>
+            </div>
+        </section>
+
+        <section id="learning-content" class="space-y-4"></section>
+    </div>
+
+    <footer class="bg-white py-4 text-center">
+        <p class="text-gray-600">© 2024 Academic Learning Assistant</p>
+    </footer>
+
+    <script>
+        const topicInput = document.getElementById('topic');
+        const generateBtn = document.getElementById('generate-btn');
+        const explanationSection = document.getElementById('explanation');
+        const explanationContent = document.getElementById('explanation-content');
+        const learningMethodButtons = document.querySelectorAll('.learning-method');
+        const learningContent = document.getElementById('learning-content');
+
+        generateBtn.addEventListener('click', generateContent);
+
+        function generateContent() {
+            const topic = topicInput.value || 'Photosynthesis';
+            
+            fetch('/generate_content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic })
+            })
+            .then(response => response.json())
+            .then(data => {
+                explanationContent.textContent = data.explanation;
+                explanationSection.classList.remove('hidden');
+
+                learningMethodButtons.forEach(button => {
+                    button.onclick = () => getLearningContent(topic, button.dataset.method);
+                });
+            })
+            .catch(error => {
+                console.error('Content generation error:', error);
+                alert('Failed to generate content');
+            });
+        }
+
+        function getLearningContent(topic, method) {
+            learningContent.innerHTML = '<p class="text-center text-gray-600">Loading...</p>';
+
+            fetch('/get_learning_method', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic, method })
+            })
+            .then(response => response.json())
+            .then(data => renderLearningContent(data))
+            .catch(error => {
+                console.error('Learning content error:', error);
+                learningContent.innerHTML = '<p class="text-center text-red-500">Failed to generate content</p>';
+            });
+        }
+
+        function renderLearningContent(data) {
+            learningContent.innerHTML = `
+                <h2 class="text-2xl font-semibold text-center mb-4 text-blue-700">
+                    ${data.learning_method.toUpperCase()} - ${data.topic}
+                </h2>
+            `;
+
+            const contentRenderer = {
+                'flashcards': renderFlashcards,
+                'multiple_choice': renderMultipleChoice
+            }[data.learning_method];
+
+            if (contentRenderer) {
+                contentRenderer(data.content);
+            }
+        }
+
+        function renderFlashcards(cards) {
+            learningContent.innerHTML += cards.map((card, index) => `
+                <div 
+                    class="bg-white p-4 rounded-lg shadow-md cursor-pointer card-transition" 
+                    data-id="${card.id}"
+                >
+                    <div class="font-bold text-blue-600 mb-2">
+                        Card ${index + 1} (${card.difficulty})
+                    </div>
+                    <div class="front">${card.front}</div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('[data-id]').forEach(cardElement => {
+                cardElement.addEventListener('click', () => {
+                    const card = cards.find(c => c.id === cardElement.dataset.id);
+                    cardElement.innerHTML = `
+                        <div class="font-bold text-blue-600 mb-2">
+                            Card (${card.difficulty})
+                        </div>
+                        <div class="back text-gray-700">${card.back}</div>
+                    `;
+                });
+            });
+        }
+
+        function renderMultipleChoice(questions) {
+            learningContent.innerHTML += questions.map((q, index) => `
+                <div 
+                    class="bg-white p-4 rounded-lg shadow-md card-transition" 
+                    data-id="${q.id}"
+                >
+                    <div class="font-bold text-blue-600 mb-2">
+                        Question ${index + 1} (${q.difficulty})
+                    </div>
+                    <div class="question mb-3">${q.question}</div>
+                    <div class="options space-y-2">
+                        ${q.options.map(option => `
+                            <label class="block">
+                                <input 
+                                    type="radio" 
+                                    name="q${index}" 
+                                    value="${option.text}" 
+                                    class="mr-2"
+                                >
+                                ${option.text}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
