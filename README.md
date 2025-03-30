@@ -23,7 +23,7 @@ An AI-driven learning platform built using **Next.js** (frontend) and **Flask** 
 ### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/arnvjshi/EduBot.git
 cd your-repo
 
 # Install frontend dependencies
@@ -40,7 +40,7 @@ pip install -r requirements.txt
 ### Start the Backend
 ```bash
 cd backend
-python app.py
+python flaskapp.py
 ```
 
 ### Start the Frontend
