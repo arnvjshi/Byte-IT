@@ -21,8 +21,11 @@ def generate_learning_content(topic, content_type='explanation'):
         prompts = {
             'explanation': f"""Provide a detailed, academic-level explanation of {topic}.
             - Use clear, structured sections
+            - Step-by-step breakdown of concepts
             - Include real-world applications
             - Maintain scientific accuracy
+            - No markdown only text
+            - Use proper line breaks and paragraphs
             - Suitable for high school and early college students""",
 
             'flashcards': f"""Generate 6-8 detailed flashcards for {topic}. Each flashcard should:
