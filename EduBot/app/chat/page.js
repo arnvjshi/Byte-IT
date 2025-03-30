@@ -215,7 +215,7 @@ export default function ChatPage() {
                       <span className="text-white font-bold">AI</span>
                     </div>
                     <Card className="p-3 max-w-[80%]">
-                      <div className="typing-indicator">Thinking</div>
+                      <div className="typing-indicator">Thinking...</div>
                     </Card>
                   </motion.div>
                 )}

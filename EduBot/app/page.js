@@ -26,7 +26,7 @@ export default function Home() {
 
       <div className="relative z-10">
         <header className="container mx-auto p-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">AI Learning</h1>
+          <h1 className="text-2xl font-bold">EduBot</h1>
           <Button
             variant="ghost"
             size="icon"
