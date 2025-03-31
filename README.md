@@ -1,4 +1,4 @@
-# AI-Powered Learning Platform
+## [**EduBot**](https://edu-bot-six.vercel.app/) : _AI-Powered Learning Platform_
 
 An AI-driven learning platform built using **Next.js** (frontend) and **Flask** (backend). It leverages **Gemini 2.0 Flash** for generating explanations, flashcards, MCQs, and quizzes based on user preferences.
 
