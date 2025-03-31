@@ -159,7 +159,7 @@ export default function ChatPage() {
             <Button variant="ghost" size="icon" onClick={() => router.push("/")} aria-label="Go back">
               <ArrowLeftIcon className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold">AI Learning Assistant</h1>
+            <h1 className="text-xl font-bold">EduBot : AI Learning Assistant</h1>
           </div>
           <Button
             variant="ghost"
